@@ -15,7 +15,7 @@ export type Friend = {
   avatar: string;
 };
 
-export type EventCategory = "Music" | "Art" | "Food" | "Tech" | "Nightlife" | "Comedy";
+export type EventCategory = "Music" | "Art" | "Food" | "Tech" | "Nightlife" | "Comedy" | "Festival" | "Wedding";
 
 export type EventItem = {
   id: string;
