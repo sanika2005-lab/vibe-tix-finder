@@ -11,8 +11,18 @@ import { useToast } from "@/hooks/use-toast";
 
 const Auth = () => {
   const [mode, setMode] = useState<"signin" | "signup">("signup");
+  const [avatar, setAvatar] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setAvatar(reader.result as string);
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +34,11 @@ const Auth = () => {
       emailInput?.value.split("@")[0] ||
       "friend";
     localStorage.setItem("vibetix_user_name", displayName);
+    if (avatar) {
+      localStorage.setItem("vibetix_user_avatar", avatar);
+    } else if (mode === "signup") {
+      localStorage.removeItem("vibetix_user_avatar");
+    }
     toast({
       title: mode === "signup" ? `Welcome to VibeTix, ${displayName}!` : `Welcome back, ${displayName}!`,
       description: "Loading your feed…",
