@@ -13,6 +13,8 @@ import { categories, events, myTickets, recommendations, friends } from "@/data/
 const Dashboard = () => {
   const [query, setQuery] = useState("");
   const [activeCat, setActiveCat] = useState<string>("All");
+  const userName =
+    (typeof window !== "undefined" && localStorage.getItem("vibetix_user_name")) || "Maya";
 
   const filtered = events.filter((e) => {
     const q = query.toLowerCase();
@@ -30,7 +32,7 @@ const Dashboard = () => {
         <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
           <div>
             <h1 className="text-3xl font-bold md:text-4xl">
-              Hey Maya 👋
+              Hey {userName} 👋
             </h1>
             <p className="mt-1 text-muted-foreground">
               Here's what your circle is up to this week.
@@ -146,9 +148,9 @@ const Dashboard = () => {
           <TabsContent value="profile" className="space-y-6">
             <Card className="bg-gradient-card p-8 shadow-card">
               <div className="flex flex-col items-center gap-4 sm:flex-row">
-                <img src={friends[0].avatar} alt="Maya" className="h-20 w-20 rounded-full object-cover ring-4 ring-primary/20" />
+                <img src={friends[0].avatar} alt={userName} className="h-20 w-20 rounded-full object-cover ring-4 ring-primary/20" />
                 <div className="text-center sm:text-left">
-                  <h2 className="text-2xl font-bold">Maya Chen</h2>
+                  <h2 className="text-2xl font-bold">{userName}</h2>
                   <p className="text-muted-foreground">maya@school.edu · Brooklyn, NY</p>
                   <div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
                     <Badge variant="secondary" className="rounded-full">Music</Badge>
