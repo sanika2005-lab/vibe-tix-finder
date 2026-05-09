@@ -32,7 +32,7 @@ const Dashboard = () => {
         <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
           <div>
             <h1 className="text-3xl font-bold md:text-4xl">
-              Hey Maya 👋
+              Hey {userName} 👋
             </h1>
             <p className="mt-1 text-muted-foreground">
               Here's what your circle is up to this week.
