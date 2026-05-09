@@ -148,9 +148,9 @@ const Dashboard = () => {
           <TabsContent value="profile" className="space-y-6">
             <Card className="bg-gradient-card p-8 shadow-card">
               <div className="flex flex-col items-center gap-4 sm:flex-row">
-                <img src={friends[0].avatar} alt="Maya" className="h-20 w-20 rounded-full object-cover ring-4 ring-primary/20" />
+                <img src={friends[0].avatar} alt={userName} className="h-20 w-20 rounded-full object-cover ring-4 ring-primary/20" />
                 <div className="text-center sm:text-left">
-                  <h2 className="text-2xl font-bold">Maya Chen</h2>
+                  <h2 className="text-2xl font-bold">{userName}</h2>
                   <p className="text-muted-foreground">maya@school.edu · Brooklyn, NY</p>
                   <div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
                     <Badge variant="secondary" className="rounded-full">Music</Badge>
