@@ -90,10 +90,41 @@ const Auth = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "signup" && (
-              <div className="space-y-1.5">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" placeholder="Maya Chen" required className="h-11 rounded-xl" />
-              </div>
+              <>
+                <div className="flex flex-col items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="group relative h-20 w-20 overflow-hidden rounded-full bg-muted ring-2 ring-border transition-smooth hover:ring-primary"
+                    aria-label="Upload profile picture"
+                  >
+                    {avatar ? (
+                      <img src={avatar} alt="Profile preview" className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="grid h-full w-full place-items-center text-muted-foreground">
+                        <Camera className="h-6 w-6" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 grid place-items-center bg-black/40 opacity-0 transition-smooth group-hover:opacity-100">
+                      <Camera className="h-5 w-5 text-white" />
+                    </div>
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleAvatarChange}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {avatar ? "Tap to change photo" : "Add a profile photo"}
+                  </p>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="name">Name</Label>
+                  <Input id="name" placeholder="Maya Chen" required className="h-11 rounded-xl" />
+                </div>
+              </>
             )}
             <div className="space-y-1.5">
               <Label htmlFor="email">Email</Label>
