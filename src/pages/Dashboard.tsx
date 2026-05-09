@@ -15,6 +15,8 @@ const Dashboard = () => {
   const [activeCat, setActiveCat] = useState<string>("All");
   const userName =
     (typeof window !== "undefined" && localStorage.getItem("vibetix_user_name")) || "Maya";
+  const userAvatar =
+    (typeof window !== "undefined" && localStorage.getItem("vibetix_user_avatar")) || friends[0].avatar;
 
   const filtered = events.filter((e) => {
     const q = query.toLowerCase();
