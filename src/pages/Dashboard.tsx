@@ -13,6 +13,8 @@ import { categories, events, myTickets, recommendations, friends } from "@/data/
 const Dashboard = () => {
   const [query, setQuery] = useState("");
   const [activeCat, setActiveCat] = useState<string>("All");
+  const userName =
+    (typeof window !== "undefined" && localStorage.getItem("vibetix_user_name")) || "Maya";
 
   const filtered = events.filter((e) => {
     const q = query.toLowerCase();
