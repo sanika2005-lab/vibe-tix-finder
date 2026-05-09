@@ -16,8 +16,16 @@ const Auth = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const nameInput = form.querySelector<HTMLInputElement>("#name");
+    const emailInput = form.querySelector<HTMLInputElement>("#email");
+    const displayName =
+      nameInput?.value.trim() ||
+      emailInput?.value.split("@")[0] ||
+      "friend";
+    localStorage.setItem("vibetix_user_name", displayName);
     toast({
-      title: mode === "signup" ? "Welcome to VibeTix!" : "Welcome back!",
+      title: mode === "signup" ? `Welcome to VibeTix, ${displayName}!` : `Welcome back, ${displayName}!`,
       description: "Loading your feed…",
     });
     setTimeout(() => navigate("/dashboard"), 600);
