@@ -4,6 +4,10 @@ import food from "@/assets/event-food.jpg";
 import tech from "@/assets/event-tech.jpg";
 import club from "@/assets/event-club.jpg";
 import comedy from "@/assets/event-comedy.jpg";
+import garba from "@/assets/event-garba.jpg";
+import holi from "@/assets/event-holi.jpg";
+import wedding from "@/assets/event-wedding.jpg";
+import diwali from "@/assets/event-diwali.jpg";
 
 export type Friend = {
   id: string;
@@ -11,7 +15,7 @@ export type Friend = {
   avatar: string;
 };
 
-export type EventCategory = "Music" | "Art" | "Food" | "Tech" | "Nightlife" | "Comedy";
+export type EventCategory = "Music" | "Art" | "Food" | "Tech" | "Nightlife" | "Comedy" | "Festival" | "Wedding";
 
 export type EventItem = {
   id: string;
@@ -109,6 +113,54 @@ export const events: EventItem[] = [
     friendsAttending: [friends[0], friends[2], friends[6]],
     description: "An intimate night of comedy with rising local comedians.",
   },
+  {
+    id: "e7",
+    title: "Garba Raas Night",
+    category: "Festival",
+    date: "Sat, Oct 4",
+    time: "7:30 PM",
+    location: "Sardar Patel Grounds, Ahmedabad",
+    price: 20,
+    image: garba,
+    friendsAttending: [friends[0], friends[2], friends[3], friends[6]],
+    description: "Nine nights of Navratri — live dhol, dandiya, and traditional Gujarati flavors.",
+  },
+  {
+    id: "e8",
+    title: "Holi Splash Festival",
+    category: "Festival",
+    date: "Fri, Mar 6",
+    time: "11:00 AM",
+    location: "Phoenix Lawns, Mumbai",
+    price: 12,
+    image: holi,
+    friendsAttending: [friends[1], friends[4], friends[5]],
+    description: "Organic colors, rain dance, bhang thandai, and Bollywood beats all day.",
+  },
+  {
+    id: "e9",
+    title: "Sharma–Patel Sangeet & Wedding",
+    category: "Wedding",
+    date: "Sun, Dec 14",
+    time: "6:00 PM",
+    location: "The Leela Palace, Udaipur",
+    price: 0,
+    image: wedding,
+    friendsAttending: [friends[0], friends[1], friends[3]],
+    description: "Invite-only sangeet followed by a grand baraat and reception. Indian attire requested.",
+  },
+  {
+    id: "e10",
+    title: "Diwali Dhamaka Mela",
+    category: "Festival",
+    date: "Mon, Nov 9",
+    time: "5:00 PM",
+    location: "Connaught Place, New Delhi",
+    price: 8,
+    image: diwali,
+    friendsAttending: [friends[2], friends[4], friends[5], friends[6]],
+    description: "Diyas, rangoli contest, street food stalls and a fireworks finale.",
+  },
 ];
 
 export const myTickets = [events[0], events[3]];
@@ -117,6 +169,8 @@ export const recommendations = [
   { event: events[1], by: friends[1] },
   { event: events[4], by: friends[3] },
   { event: events[5], by: friends[2] },
+  { event: events[6], by: friends[2] },
+  { event: events[8], by: friends[0] },
 ];
 
-export const categories: EventCategory[] = ["Music", "Art", "Food", "Tech", "Nightlife", "Comedy"];
+export const categories: EventCategory[] = ["Music", "Art", "Food", "Tech", "Nightlife", "Comedy", "Festival", "Wedding"];
