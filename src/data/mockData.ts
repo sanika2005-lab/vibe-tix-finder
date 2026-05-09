@@ -4,6 +4,10 @@ import food from "@/assets/event-food.jpg";
 import tech from "@/assets/event-tech.jpg";
 import club from "@/assets/event-club.jpg";
 import comedy from "@/assets/event-comedy.jpg";
+import garba from "@/assets/event-garba.jpg";
+import holi from "@/assets/event-holi.jpg";
+import wedding from "@/assets/event-wedding.jpg";
+import diwali from "@/assets/event-diwali.jpg";
 
 export type Friend = {
   id: string;
