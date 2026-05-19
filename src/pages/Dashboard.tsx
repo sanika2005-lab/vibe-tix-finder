@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
-import { Search, Sparkles, Ticket as TicketIcon, QrCode, Calendar, MapPin, Camera, Pencil } from "lucide-react";
+import { Search, Sparkles, Ticket as TicketIcon, QrCode, Calendar, MapPin, Camera, Pencil, Download, FileDown } from "lucide-react";
+import html2canvas from "html2canvas-pro";
+import { jsPDF } from "jspdf";
 import { Navbar } from "@/components/Navbar";
 import { EventCard } from "@/components/EventCard";
 import { FriendsAvatars } from "@/components/FriendsAvatars";
@@ -39,6 +41,34 @@ const Dashboard = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [activeTicket, setActiveTicket] = useState<EventItem | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const ticketRef = useRef<HTMLDivElement>(null);
+
+  const captureTicket = async () => {
+    if (!ticketRef.current) return null;
+    return await html2canvas(ticketRef.current, { backgroundColor: "#ffffff", scale: 2 });
+  };
+
+  const safeName = (s: string) => s.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+
+  const downloadImage = async () => {
+    const canvas = await captureTicket();
+    if (!canvas || !activeTicket) return;
+    const link = document.createElement("a");
+    link.download = `vibetix-${safeName(activeTicket.title)}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+    toast({ title: "Ticket image downloaded" });
+  };
+
+  const downloadPDF = async () => {
+    const canvas = await captureTicket();
+    if (!canvas || !activeTicket) return;
+    const img = canvas.toDataURL("image/png");
+    const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: [canvas.width, canvas.height] });
+    pdf.addImage(img, "PNG", 0, 0, canvas.width, canvas.height);
+    pdf.save(`vibetix-${safeName(activeTicket.title)}.pdf`);
+    toast({ title: "Ticket PDF downloaded" });
+  };
 
   const onPickImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -275,8 +305,8 @@ const Dashboard = () => {
                 <DialogTitle>{activeTicket.title}</DialogTitle>
                 <DialogDescription>Your VibeTix entry pass</DialogDescription>
               </DialogHeader>
-              <img src={activeTicket.image} alt={activeTicket.title} className="h-40 w-full rounded-xl object-cover" />
-              <div className="space-y-2 text-sm">
+              <div ref={ticketRef} className="space-y-2 rounded-xl bg-background p-3 text-sm">
+                <img src={activeTicket.image} alt={activeTicket.title} crossOrigin="anonymous" className="h-40 w-full rounded-xl object-cover" />
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Calendar className="h-4 w-4" /> {activeTicket.date} · {activeTicket.time}
                 </div>
@@ -298,8 +328,14 @@ const Dashboard = () => {
                   <p className="mt-2 text-xs text-muted-foreground">Scan at entrance</p>
                 </div>
               </div>
-              <DialogFooter>
-                <Button className="w-full rounded-full" onClick={() => setActiveTicket(null)}>Close</Button>
+              <DialogFooter className="flex-col gap-2 sm:flex-row">
+                <Button variant="outline" className="flex-1 rounded-full" onClick={downloadImage}>
+                  <Download className="mr-2 h-4 w-4" /> PNG
+                </Button>
+                <Button variant="outline" className="flex-1 rounded-full" onClick={downloadPDF}>
+                  <FileDown className="mr-2 h-4 w-4" /> PDF
+                </Button>
+                <Button className="flex-1 rounded-full" onClick={() => setActiveTicket(null)}>Close</Button>
               </DialogFooter>
             </>
           )}
