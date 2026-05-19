@@ -41,6 +41,34 @@ const Dashboard = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [activeTicket, setActiveTicket] = useState<EventItem | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const ticketRef = useRef<HTMLDivElement>(null);
+
+  const captureTicket = async () => {
+    if (!ticketRef.current) return null;
+    return await html2canvas(ticketRef.current, { backgroundColor: "#ffffff", scale: 2 });
+  };
+
+  const safeName = (s: string) => s.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+
+  const downloadImage = async () => {
+    const canvas = await captureTicket();
+    if (!canvas || !activeTicket) return;
+    const link = document.createElement("a");
+    link.download = `vibetix-${safeName(activeTicket.title)}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+    toast({ title: "Ticket image downloaded" });
+  };
+
+  const downloadPDF = async () => {
+    const canvas = await captureTicket();
+    if (!canvas || !activeTicket) return;
+    const img = canvas.toDataURL("image/png");
+    const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: [canvas.width, canvas.height] });
+    pdf.addImage(img, "PNG", 0, 0, canvas.width, canvas.height);
+    pdf.save(`vibetix-${safeName(activeTicket.title)}.pdf`);
+    toast({ title: "Ticket PDF downloaded" });
+  };
 
   const onPickImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
