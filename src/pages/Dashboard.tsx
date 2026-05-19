@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
-import { Search, Sparkles, Ticket as TicketIcon, QrCode, Calendar, MapPin, Camera, Pencil } from "lucide-react";
+import { Search, Sparkles, Ticket as TicketIcon, QrCode, Calendar, MapPin, Camera, Pencil, Download, FileDown } from "lucide-react";
+import html2canvas from "html2canvas-pro";
+import { jsPDF } from "jspdf";
 import { Navbar } from "@/components/Navbar";
 import { EventCard } from "@/components/EventCard";
 import { FriendsAvatars } from "@/components/FriendsAvatars";
