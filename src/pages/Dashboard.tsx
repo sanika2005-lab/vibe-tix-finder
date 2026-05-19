@@ -305,8 +305,8 @@ const Dashboard = () => {
                 <DialogTitle>{activeTicket.title}</DialogTitle>
                 <DialogDescription>Your VibeTix entry pass</DialogDescription>
               </DialogHeader>
-              <img src={activeTicket.image} alt={activeTicket.title} className="h-40 w-full rounded-xl object-cover" />
-              <div className="space-y-2 text-sm">
+              <div ref={ticketRef} className="space-y-2 rounded-xl bg-background p-3 text-sm">
+                <img src={activeTicket.image} alt={activeTicket.title} crossOrigin="anonymous" className="h-40 w-full rounded-xl object-cover" />
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Calendar className="h-4 w-4" /> {activeTicket.date} · {activeTicket.time}
                 </div>
@@ -328,8 +328,14 @@ const Dashboard = () => {
                   <p className="mt-2 text-xs text-muted-foreground">Scan at entrance</p>
                 </div>
               </div>
-              <DialogFooter>
-                <Button className="w-full rounded-full" onClick={() => setActiveTicket(null)}>Close</Button>
+              <DialogFooter className="flex-col gap-2 sm:flex-row">
+                <Button variant="outline" className="flex-1 rounded-full" onClick={downloadImage}>
+                  <Download className="mr-2 h-4 w-4" /> PNG
+                </Button>
+                <Button variant="outline" className="flex-1 rounded-full" onClick={downloadPDF}>
+                  <FileDown className="mr-2 h-4 w-4" /> PDF
+                </Button>
+                <Button className="flex-1 rounded-full" onClick={() => setActiveTicket(null)}>Close</Button>
               </DialogFooter>
             </>
           )}
