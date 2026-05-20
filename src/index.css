@@ -123,37 +123,49 @@
 }
 
 @layer utilities {
-  .bg-gradient-primary {
-    background: var(--gradient-primary);
-  }
-  .bg-gradient-vibrant {
-    background: var(--gradient-vibrant);
-  }
-  .bg-gradient-soft {
-    background: var(--gradient-soft);
-  }
-  .bg-gradient-card {
-    background: var(--gradient-card);
-  }
+  .bg-gradient-primary { background: var(--gradient-primary); }
+  .bg-gradient-vibrant { background: var(--gradient-vibrant); }
+  .bg-gradient-soft { background: var(--gradient-soft); }
+  .bg-gradient-card { background: var(--gradient-card); }
   .text-gradient {
     background: var(--gradient-vibrant);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  .shadow-glow {
-    box-shadow: var(--shadow-glow);
+  .shadow-glow { box-shadow: var(--shadow-glow); }
+  .shadow-card { box-shadow: var(--shadow-card); }
+  .shadow-elegant { box-shadow: var(--shadow-elegant); }
+  .transition-smooth { transition: var(--transition-smooth); }
+  .transition-bounce { transition: var(--transition-bounce); }
+
+  .bg-hero-mesh {
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(at 18% 22%, hsl(var(--primary) / 0.45) 0px, transparent 50%),
+      radial-gradient(at 82% 15%, hsl(var(--accent) / 0.40) 0px, transparent 55%),
+      radial-gradient(at 70% 80%, hsl(var(--primary-glow) / 0.45) 0px, transparent 55%),
+      radial-gradient(at 20% 85%, hsl(280 80% 60% / 0.30) 0px, transparent 50%),
+      radial-gradient(at 50% 50%, hsl(var(--accent) / 0.18) 0px, transparent 60%);
   }
-  .shadow-card {
-    box-shadow: var(--shadow-card);
+  .bg-grid-overlay {
+    background-image:
+      linear-gradient(hsl(var(--foreground) / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--foreground) / 0.06) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 75%);
   }
-  .shadow-elegant {
-    box-shadow: var(--shadow-elegant);
+  .animate-blob {
+    animation: blob 18s ease-in-out infinite;
   }
-  .transition-smooth {
-    transition: var(--transition-smooth);
+  .animate-blob-delay {
+    animation: blob 22s ease-in-out infinite;
+    animation-delay: -7s;
   }
-  .transition-bounce {
-    transition: var(--transition-bounce);
-  }
+}
+
+@keyframes blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -40px) scale(1.1); }
+  66% { transform: translate(-25px, 25px) scale(0.95); }
 }

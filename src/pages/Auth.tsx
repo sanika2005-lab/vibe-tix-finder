@@ -63,10 +63,15 @@ const Auth = () => {
   };
 
   const handleSocial = (provider: "Google" | "Apple") => {
-    const displayName = provider === "Google" ? "Google User" : "Apple User";
-    const email = provider === "Google" ? "user@gmail.com" : "user@icloud.com";
-    toast({ title: `Continuing with ${provider}…` });
-    finishLogin(displayName, email);
+    const defaultName = provider === "Google" ? "Google User" : "Apple User";
+    const defaultEmail = provider === "Google" ? "user@gmail.com" : "user@icloud.com";
+    const entered = window.prompt(`Enter your ${provider} account name`, "");
+    const displayName = (entered && entered.trim()) || defaultName;
+    const emailGuess = entered && entered.trim()
+      ? `${entered.trim().toLowerCase().replace(/\s+/g, ".")}@${provider === "Google" ? "gmail.com" : "icloud.com"}`
+      : defaultEmail;
+    toast({ title: `Continuing with ${provider}…`, description: `Signing in as ${displayName}` });
+    finishLogin(displayName, emailGuess);
   };
 
   return (
