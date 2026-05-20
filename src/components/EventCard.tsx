@@ -259,6 +259,33 @@ export const EventCard = ({ event }: { event: EventItem }) => {
                     Amount: ₹{formatINR(event.price)} · {event.title}
                   </p>
                 </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor={`utr-${event.id}`}>
+                    UTR / Transaction ID{" "}
+                    <span className="text-xs font-normal text-muted-foreground">(optional)</span>
+                  </Label>
+                  <Input
+                    id={`utr-${event.id}`}
+                    value={utr}
+                    onChange={(e) => {
+                      setUtr(e.target.value);
+                      if (utrError) setUtrError(null);
+                    }}
+                    placeholder="e.g. 412345678901"
+                    maxLength={22}
+                    autoCapitalize="characters"
+                    className="h-11 rounded-xl font-mono uppercase"
+                  />
+                  {utrError ? (
+                    <p className="text-xs text-destructive">{utrError}</p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      Found in your UPI app after payment. We'll verify it instantly.
+                    </p>
+                  )}
+                </div>
+
                 <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
                   <Mail className="h-3.5 w-3.5" />
                   Confirmation will be emailed to{" "}
@@ -267,12 +294,12 @@ export const EventCard = ({ event }: { event: EventItem }) => {
               </div>
 
               <DialogFooter className="gap-2 sm:gap-2">
-                <Button variant="ghost" onClick={() => setStep("details")}>
+                <Button variant="ghost" onClick={() => setStep("details")} disabled={verifying}>
                   Back
                 </Button>
-                <Button onClick={completeRegistration} className="rounded-full">
+                <Button onClick={handlePayClick} disabled={verifying} className="rounded-full">
                   <CheckCircle2 className="mr-2 h-4 w-4" />
-                  I have paid
+                  {verifying ? "Verifying…" : "I have paid"}
                 </Button>
               </DialogFooter>
             </>
