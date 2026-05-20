@@ -38,8 +38,9 @@ const Index = () => {
 
       {/* Hero */}
       <section className="relative overflow-hidden">
+        <div className="absolute inset-0 -z-20 bg-hero-mesh" aria-hidden />
         <div
-          className="absolute inset-0 -z-10 opacity-50 dark:opacity-70"
+          className="absolute inset-0 -z-10 opacity-25 mix-blend-overlay dark:opacity-40"
           style={{
             backgroundImage: `url(${heroBg})`,
             backgroundSize: "cover",
@@ -47,7 +48,10 @@ const Index = () => {
           }}
           aria-hidden
         />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/40 via-background/80 to-background" aria-hidden />
+        <div className="absolute inset-0 -z-10 bg-grid-overlay opacity-60" aria-hidden />
+        <div className="pointer-events-none absolute -left-24 top-10 -z-10 h-72 w-72 rounded-full bg-gradient-primary opacity-30 blur-3xl animate-blob" aria-hidden />
+        <div className="pointer-events-none absolute -right-20 top-40 -z-10 h-80 w-80 rounded-full bg-gradient-vibrant opacity-30 blur-3xl animate-blob-delay" aria-hidden />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/20 via-background/70 to-background" aria-hidden />
 
         <div className="container py-20 md:py-32">
           <div className="mx-auto max-w-3xl text-center">
