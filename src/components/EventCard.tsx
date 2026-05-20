@@ -31,6 +31,9 @@ export const EventCard = ({ event }: { event: EventItem }) => {
   const [email, setEmail] = useState(
     () => localStorage.getItem("vibetix_user_email") || ""
   );
+  const [utr, setUtr] = useState("");
+  const [utrError, setUtrError] = useState<string | null>(null);
+  const [verifying, setVerifying] = useState(false);
   const [registeredName, setRegisteredName] = useState<string | null>(null);
 
   const isFree = event.price === 0;
@@ -38,6 +41,8 @@ export const EventCard = ({ event }: { event: EventItem }) => {
   const resetAndClose = () => {
     setOpen(false);
     setStep("details");
+    setUtr("");
+    setUtrError(null);
     setName("");
   };
 
