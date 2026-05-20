@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, MapPin, CheckCircle2 } from "lucide-react";
+import { Calendar, MapPin, CheckCircle2, IndianRupee, Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -16,24 +16,70 @@ import {
 import { FriendsAvatars } from "@/components/FriendsAvatars";
 import type { EventItem } from "@/data/mockData";
 import { useToast } from "@/hooks/use-toast";
+import paymentQr from "@/assets/payment-qr.jpeg";
+
+type Step = "details" | "pay";
+
+const formatINR = (n: number) =>
+  new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 }).format(n);
 
 export const EventCard = ({ event }: { event: EventItem }) => {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
+  const [step, setStep] = useState<Step>("details");
   const [name, setName] = useState("");
+  const [email, setEmail] = useState(
+    () => localStorage.getItem("vibetix_user_email") || ""
+  );
   const [registeredName, setRegisteredName] = useState<string | null>(null);
 
-  const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault();
-    const trimmed = name.trim();
-    if (!trimmed) return;
-    setRegisteredName(trimmed);
+  const isFree = event.price === 0;
+
+  const resetAndClose = () => {
     setOpen(false);
+    setStep("details");
     setName("");
+  };
+
+  const handleDetailsSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    if (isFree) {
+      completeRegistration();
+    } else {
+      setStep("pay");
+    }
+  };
+
+  const completeRegistration = () => {
+    const trimmed = name.trim();
+    setRegisteredName(trimmed);
+
+    // Trigger confirmation email via user's mail client
+    if (email.trim()) {
+      const subject = encodeURIComponent(`Ticket confirmed: ${event.title}`);
+      const body = encodeURIComponent(
+        `Hi ${trimmed},\n\nYour booking is confirmed 🎉\n\n` +
+          `Event: ${event.title}\nDate: ${event.date} · ${event.time}\n` +
+          `Venue: ${event.location}\n` +
+          `Amount paid: ${isFree ? "Free" : `₹${formatINR(event.price)}`}\n` +
+          `Ticket ID: VTX-${event.id.toUpperCase()}-${trimmed
+            .toUpperCase()
+            .replace(/\s+/g, "")}\n\nSee you there!\n— VibeTix`
+      );
+      // Open user's mail client pre-filled
+      window.location.href = `mailto:${encodeURIComponent(
+        email.trim()
+      )}?subject=${subject}&body=${body}`;
+    }
+
     toast({
-      title: "Registration complete!",
-      description: `${trimmed} is registered for ${event.title}.`,
+      title: isFree ? "Registration complete!" : "Payment received 🎉",
+      description: email.trim()
+        ? `Confirmation sent to ${email.trim()}`
+        : `${trimmed} is registered for ${event.title}.`,
     });
+    resetAndClose();
   };
 
   return (
@@ -48,8 +94,15 @@ export const EventCard = ({ event }: { event: EventItem }) => {
         <Badge className="absolute left-3 top-3 bg-background/80 text-foreground backdrop-blur-md hover:bg-background/80">
           {event.category}
         </Badge>
-        <div className="absolute right-3 top-3 rounded-full bg-background/80 px-3 py-1 text-sm font-semibold backdrop-blur-md">
-          {event.price === 0 ? "Free" : `$${event.price}`}
+        <div className="absolute right-3 top-3 flex items-center gap-0.5 rounded-full bg-background/80 px-3 py-1 text-sm font-semibold backdrop-blur-md">
+          {isFree ? (
+            "Free"
+          ) : (
+            <>
+              <IndianRupee className="h-3.5 w-3.5" />
+              {formatINR(event.price)}
+            </>
+          )}
         </div>
       </div>
 
@@ -85,43 +138,111 @@ export const EventCard = ({ event }: { event: EventItem }) => {
               Registered
             </Button>
           ) : (
-            <Button size="sm" onClick={() => setOpen(true)} className="rounded-full">
-              Book
+            <Button
+              size="sm"
+              onClick={() => {
+                setStep("details");
+                setOpen(true);
+              }}
+              className="rounded-full"
+            >
+              {isFree ? "Book" : `Book · ₹${formatINR(event.price)}`}
             </Button>
           )}
         </div>
       </div>
 
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={(o) => (o ? setOpen(true) : resetAndClose())}>
         <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Register for {event.title}</DialogTitle>
-            <DialogDescription>
-              Enter your full name as it should appear on the ticket.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleRegister} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label htmlFor={`name-${event.id}`}>Full name</Label>
-              <Input
-                id={`name-${event.id}`}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Aarav Sharma"
-                autoFocus
-                required
-                className="h-11 rounded-xl"
-              />
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit" className="rounded-full">
-                Confirm registration
-              </Button>
-            </DialogFooter>
-          </form>
+          {step === "details" ? (
+            <>
+              <DialogHeader>
+                <DialogTitle>Register for {event.title}</DialogTitle>
+                <DialogDescription>
+                  {isFree
+                    ? "Enter your details to confirm your free spot."
+                    : `Ticket price: ₹${formatINR(event.price)}. Pay via UPI in the next step.`}
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleDetailsSubmit} className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor={`name-${event.id}`}>Full name</Label>
+                  <Input
+                    id={`name-${event.id}`}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g. Sanika Yadav"
+                    autoFocus
+                    required
+                    className="h-11 rounded-xl"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor={`email-${event.id}`}>Email for confirmation</Label>
+                  <Input
+                    id={`email-${event.id}`}
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    required
+                    className="h-11 rounded-xl"
+                  />
+                </div>
+                <DialogFooter>
+                  <Button type="button" variant="ghost" onClick={resetAndClose}>
+                    Cancel
+                  </Button>
+                  <Button type="submit" className="rounded-full">
+                    {isFree ? "Confirm registration" : "Continue to payment"}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </>
+          ) : (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <IndianRupee className="h-5 w-5" />
+                  Pay ₹{formatINR(event.price)}
+                </DialogTitle>
+                <DialogDescription>
+                  Scan the QR with PhonePe, Google Pay, Paytm or any UPI app.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-4">
+                <div className="overflow-hidden rounded-2xl border border-border/60 bg-black">
+                  <img
+                    src={paymentQr}
+                    alt="UPI payment QR code"
+                    className="mx-auto block w-full max-w-xs"
+                  />
+                </div>
+                <div className="rounded-xl bg-muted/60 p-3 text-center text-sm">
+                  <p className="font-medium text-foreground">Miss SANIKA KRUSHNAT YADAV</p>
+                  <p className="text-xs text-muted-foreground">
+                    Amount: ₹{formatINR(event.price)} · {event.title}
+                  </p>
+                </div>
+                <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+                  <Mail className="h-3.5 w-3.5" />
+                  Confirmation will be emailed to{" "}
+                  <span className="font-medium text-foreground">{email}</span>
+                </p>
+              </div>
+
+              <DialogFooter className="gap-2 sm:gap-2">
+                <Button variant="ghost" onClick={() => setStep("details")}>
+                  Back
+                </Button>
+                <Button onClick={completeRegistration} className="rounded-full">
+                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                  I have paid
+                </Button>
+              </DialogFooter>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </Card>
