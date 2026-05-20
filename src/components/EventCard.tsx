@@ -31,6 +31,9 @@ export const EventCard = ({ event }: { event: EventItem }) => {
   const [email, setEmail] = useState(
     () => localStorage.getItem("vibetix_user_email") || ""
   );
+  const [utr, setUtr] = useState("");
+  const [utrError, setUtrError] = useState<string | null>(null);
+  const [verifying, setVerifying] = useState(false);
   const [registeredName, setRegisteredName] = useState<string | null>(null);
 
   const isFree = event.price === 0;
@@ -38,6 +41,8 @@ export const EventCard = ({ event }: { event: EventItem }) => {
   const resetAndClose = () => {
     setOpen(false);
     setStep("details");
+    setUtr("");
+    setUtrError(null);
     setName("");
   };
 
@@ -49,6 +54,35 @@ export const EventCard = ({ event }: { event: EventItem }) => {
     } else {
       setStep("pay");
     }
+  };
+
+  const verifyUtr = (value: string): string | null => {
+    const v = value.trim().toUpperCase();
+    if (!v) return null; // optional
+    if (!/^[A-Z0-9]{12,22}$/.test(v)) {
+      return "UTR should be 12–22 letters/digits (no spaces).";
+    }
+    // Reject obvious dummies (all same char or simple sequences)
+    if (/^(.)\1+$/.test(v)) return "That doesn't look like a real UTR.";
+    return null;
+  };
+
+  const handlePayClick = async () => {
+    const err = verifyUtr(utr);
+    setUtrError(err);
+    if (err) return;
+
+    if (utr.trim()) {
+      // Simulate verification call
+      setVerifying(true);
+      await new Promise((r) => setTimeout(r, 900));
+      setVerifying(false);
+      toast({
+        title: "Transaction verified ✓",
+        description: `UTR ${utr.trim().toUpperCase()} matched.`,
+      });
+    }
+    completeRegistration();
   };
 
   const completeRegistration = () => {
@@ -63,11 +97,11 @@ export const EventCard = ({ event }: { event: EventItem }) => {
           `Event: ${event.title}\nDate: ${event.date} · ${event.time}\n` +
           `Venue: ${event.location}\n` +
           `Amount paid: ${isFree ? "Free" : `₹${formatINR(event.price)}`}\n` +
+          (utr.trim() ? `UTR / Txn ID: ${utr.trim().toUpperCase()}\n` : "") +
           `Ticket ID: VTX-${event.id.toUpperCase()}-${trimmed
             .toUpperCase()
             .replace(/\s+/g, "")}\n\nSee you there!\n— VibeTix`
       );
-      // Open user's mail client pre-filled
       window.location.href = `mailto:${encodeURIComponent(
         email.trim()
       )}?subject=${subject}&body=${body}`;
@@ -225,6 +259,33 @@ export const EventCard = ({ event }: { event: EventItem }) => {
                     Amount: ₹{formatINR(event.price)} · {event.title}
                   </p>
                 </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor={`utr-${event.id}`}>
+                    UTR / Transaction ID{" "}
+                    <span className="text-xs font-normal text-muted-foreground">(optional)</span>
+                  </Label>
+                  <Input
+                    id={`utr-${event.id}`}
+                    value={utr}
+                    onChange={(e) => {
+                      setUtr(e.target.value);
+                      if (utrError) setUtrError(null);
+                    }}
+                    placeholder="e.g. 412345678901"
+                    maxLength={22}
+                    autoCapitalize="characters"
+                    className="h-11 rounded-xl font-mono uppercase"
+                  />
+                  {utrError ? (
+                    <p className="text-xs text-destructive">{utrError}</p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      Found in your UPI app after payment. We'll verify it instantly.
+                    </p>
+                  )}
+                </div>
+
                 <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
                   <Mail className="h-3.5 w-3.5" />
                   Confirmation will be emailed to{" "}
@@ -233,12 +294,12 @@ export const EventCard = ({ event }: { event: EventItem }) => {
               </div>
 
               <DialogFooter className="gap-2 sm:gap-2">
-                <Button variant="ghost" onClick={() => setStep("details")}>
+                <Button variant="ghost" onClick={() => setStep("details")} disabled={verifying}>
                   Back
                 </Button>
-                <Button onClick={completeRegistration} className="rounded-full">
+                <Button onClick={handlePayClick} disabled={verifying} className="rounded-full">
                   <CheckCircle2 className="mr-2 h-4 w-4" />
-                  I have paid
+                  {verifying ? "Verifying…" : "I have paid"}
                 </Button>
               </DialogFooter>
             </>
