@@ -56,6 +56,35 @@ export const EventCard = ({ event }: { event: EventItem }) => {
     }
   };
 
+  const verifyUtr = (value: string): string | null => {
+    const v = value.trim().toUpperCase();
+    if (!v) return null; // optional
+    if (!/^[A-Z0-9]{12,22}$/.test(v)) {
+      return "UTR should be 12–22 letters/digits (no spaces).";
+    }
+    // Reject obvious dummies (all same char or simple sequences)
+    if (/^(.)\1+$/.test(v)) return "That doesn't look like a real UTR.";
+    return null;
+  };
+
+  const handlePayClick = async () => {
+    const err = verifyUtr(utr);
+    setUtrError(err);
+    if (err) return;
+
+    if (utr.trim()) {
+      // Simulate verification call
+      setVerifying(true);
+      await new Promise((r) => setTimeout(r, 900));
+      setVerifying(false);
+      toast({
+        title: "Transaction verified ✓",
+        description: `UTR ${utr.trim().toUpperCase()} matched.`,
+      });
+    }
+    completeRegistration();
+  };
+
   const completeRegistration = () => {
     const trimmed = name.trim();
     setRegisteredName(trimmed);
@@ -68,11 +97,11 @@ export const EventCard = ({ event }: { event: EventItem }) => {
           `Event: ${event.title}\nDate: ${event.date} · ${event.time}\n` +
           `Venue: ${event.location}\n` +
           `Amount paid: ${isFree ? "Free" : `₹${formatINR(event.price)}`}\n` +
+          (utr.trim() ? `UTR / Txn ID: ${utr.trim().toUpperCase()}\n` : "") +
           `Ticket ID: VTX-${event.id.toUpperCase()}-${trimmed
             .toUpperCase()
             .replace(/\s+/g, "")}\n\nSee you there!\n— VibeTix`
       );
-      // Open user's mail client pre-filled
       window.location.href = `mailto:${encodeURIComponent(
         email.trim()
       )}?subject=${subject}&body=${body}`;
