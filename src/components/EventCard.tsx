@@ -18,6 +18,15 @@ import type { EventItem } from "@/data/mockData";
 import { useToast } from "@/hooks/use-toast";
 import paymentQr from "@/assets/payment-qr.jpeg";
 
+type PayMethod = { id: string; name: string; tag: string; gradient: string; icon: typeof Smartphone };
+
+const PAY_METHODS: PayMethod[] = [
+  { id: "phonepe", name: "PhonePe", tag: "UPI", gradient: "from-[#5f259f] to-[#9b59ff]", icon: Smartphone },
+  { id: "gpay", name: "Google Pay", tag: "UPI", gradient: "from-[#4285F4] via-[#34A853] to-[#FBBC04]", icon: Wallet },
+  { id: "paytm", name: "Paytm", tag: "UPI / Wallet", gradient: "from-[#00b9f1] to-[#002970]", icon: Smartphone },
+  { id: "bhim", name: "BHIM UPI", tag: "Any UPI app", gradient: "from-[#ff7a00] to-[#1aa260]", icon: Building2 },
+];
+
 type Step = "details" | "pay";
 
 const formatINR = (n: number) =>
