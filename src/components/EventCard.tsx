@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, MapPin, CheckCircle2, IndianRupee, Mail } from "lucide-react";
+import { Calendar, MapPin, CheckCircle2, IndianRupee, Mail, Smartphone, Wallet, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -18,6 +18,15 @@ import type { EventItem } from "@/data/mockData";
 import { useToast } from "@/hooks/use-toast";
 import paymentQr from "@/assets/payment-qr.jpeg";
 
+type PayMethod = { id: string; name: string; tag: string; gradient: string; icon: typeof Smartphone };
+
+const PAY_METHODS: PayMethod[] = [
+  { id: "phonepe", name: "PhonePe", tag: "UPI", gradient: "from-[#5f259f] to-[#9b59ff]", icon: Smartphone },
+  { id: "gpay", name: "Google Pay", tag: "UPI", gradient: "from-[#4285F4] via-[#34A853] to-[#FBBC04]", icon: Wallet },
+  { id: "paytm", name: "Paytm", tag: "UPI / Wallet", gradient: "from-[#00b9f1] to-[#002970]", icon: Smartphone },
+  { id: "bhim", name: "BHIM UPI", tag: "Any UPI app", gradient: "from-[#ff7a00] to-[#1aa260]", icon: Building2 },
+];
+
 type Step = "details" | "pay";
 
 const formatINR = (n: number) =>
@@ -34,6 +43,7 @@ export const EventCard = ({ event }: { event: EventItem }) => {
   const [utr, setUtr] = useState("");
   const [utrError, setUtrError] = useState<string | null>(null);
   const [verifying, setVerifying] = useState(false);
+  const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [registeredName, setRegisteredName] = useState<string | null>(null);
 
   const isFree = event.price === 0;
@@ -43,6 +53,7 @@ export const EventCard = ({ event }: { event: EventItem }) => {
     setStep("details");
     setUtr("");
     setUtrError(null);
+    setSelectedMethod(null);
     setName("");
   };
 
@@ -67,12 +78,20 @@ export const EventCard = ({ event }: { event: EventItem }) => {
   };
 
   const handlePayClick = async () => {
+    if (!selectedMethod) {
+      toast({
+        title: "Choose a payment app",
+        description: "Select PhonePe, Google Pay, Paytm or BHIM UPI to continue.",
+        variant: "destructive",
+      });
+      return;
+    }
     const err = verifyUtr(utr);
     setUtrError(err);
     if (err) {
       toast({
         title: "Payment not verified",
-        description: "We can only send the confirmation email after a valid UTR is verified.",
+        description: "Enter the UTR shown in your payment app after paying.",
         variant: "destructive",
       });
       return;
@@ -244,24 +263,56 @@ export const EventCard = ({ event }: { event: EventItem }) => {
                   Pay ₹{formatINR(event.price)}
                 </DialogTitle>
                 <DialogDescription>
-                  Scan the QR with PhonePe, Google Pay, Paytm or any UPI app.
+                  Choose your payment app to pay securely. No QR scan needed.
                 </DialogDescription>
               </DialogHeader>
 
               <div className="space-y-4">
-                <div className="overflow-hidden rounded-2xl border border-border/60 bg-black">
-                  <img
-                    src={paymentQr}
-                    alt="UPI payment QR code"
-                    className="mx-auto block w-full max-w-xs"
-                  />
-                </div>
                 <div className="rounded-xl bg-muted/60 p-3 text-center text-sm">
-                  <p className="font-medium text-foreground">Miss SANIKA KRUSHNAT YADAV</p>
+                  <p className="font-medium text-foreground">{name || "Attendee"}</p>
                   <p className="text-xs text-muted-foreground">
                     Amount: ₹{formatINR(event.price)} · {event.title}
                   </p>
                 </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs uppercase tracking-wide text-muted-foreground">
+                    Pay using
+                  </Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {PAY_METHODS.map((m) => {
+                      const Icon = m.icon;
+                      const active = selectedMethod === m.id;
+                      return (
+                        <button
+                          key={m.id}
+                          type="button"
+                          onClick={() => setSelectedMethod(m.id)}
+                          className={`group flex items-center gap-3 rounded-xl border p-3 text-left transition-smooth ${
+                            active
+                              ? "border-primary bg-primary/5 ring-2 ring-primary/40"
+                              : "border-border/60 hover:border-primary/50 hover:bg-muted/40"
+                          }`}
+                        >
+                          <span
+                            className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-gradient-to-br ${m.gradient} text-white shadow-sm`}
+                          >
+                            <Icon className="h-4 w-4" />
+                          </span>
+                          <span className="min-w-0">
+                            <span className="block truncate text-sm font-semibold text-foreground">
+                              {m.name}
+                            </span>
+                            <span className="block truncate text-[11px] text-muted-foreground">
+                              {m.tag}
+                            </span>
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
 
                 <div className="space-y-1.5">
                   <Label htmlFor={`utr-${event.id}`}>
