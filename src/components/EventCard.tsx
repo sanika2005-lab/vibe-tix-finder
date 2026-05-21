@@ -266,7 +266,7 @@ export const EventCard = ({ event }: { event: EventItem }) => {
                 <div className="space-y-1.5">
                   <Label htmlFor={`utr-${event.id}`}>
                     UTR / Transaction ID{" "}
-                    <span className="text-xs font-normal text-muted-foreground">(optional)</span>
+                    <span className="text-xs font-normal text-destructive">(required)</span>
                   </Label>
                   <Input
                     id={`utr-${event.id}`}
