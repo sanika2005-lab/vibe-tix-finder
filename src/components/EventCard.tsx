@@ -78,12 +78,20 @@ export const EventCard = ({ event }: { event: EventItem }) => {
   };
 
   const handlePayClick = async () => {
+    if (!selectedMethod) {
+      toast({
+        title: "Choose a payment app",
+        description: "Select PhonePe, Google Pay, Paytm or BHIM UPI to continue.",
+        variant: "destructive",
+      });
+      return;
+    }
     const err = verifyUtr(utr);
     setUtrError(err);
     if (err) {
       toast({
         title: "Payment not verified",
-        description: "We can only send the confirmation email after a valid UTR is verified.",
+        description: "Enter the UTR shown in your payment app after paying.",
         variant: "destructive",
       });
       return;
