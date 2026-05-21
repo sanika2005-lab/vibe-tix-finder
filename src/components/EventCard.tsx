@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, MapPin, CheckCircle2, IndianRupee, Mail } from "lucide-react";
+import { Calendar, MapPin, CheckCircle2, IndianRupee, Mail, Smartphone, Wallet, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
