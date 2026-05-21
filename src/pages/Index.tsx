@@ -213,6 +213,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Help / Customer support */}
+      <HelpSection />
+
       {/* CTA */}
       <section className="container pb-24">
         <Card className="relative overflow-hidden border-none bg-gradient-vibrant p-12 text-center shadow-elegant md:p-20">
