@@ -43,6 +43,7 @@ export const EventCard = ({ event }: { event: EventItem }) => {
   const [utr, setUtr] = useState("");
   const [utrError, setUtrError] = useState<string | null>(null);
   const [verifying, setVerifying] = useState(false);
+  const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [registeredName, setRegisteredName] = useState<string | null>(null);
 
   const isFree = event.price === 0;
