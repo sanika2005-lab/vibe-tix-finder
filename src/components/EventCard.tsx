@@ -18,14 +18,36 @@ import type { EventItem } from "@/data/mockData";
 import { useToast } from "@/hooks/use-toast";
 import paymentQr from "@/assets/payment-qr.jpeg";
 
-type PayMethod = { id: string; name: string; tag: string; gradient: string; icon: typeof Smartphone };
+type PayMethod = {
+  id: string;
+  name: string;
+  tag: string;
+  gradient: string;
+  icon: typeof Smartphone;
+  scheme: string; // UPI deep-link scheme for that app
+};
+
+const UPI_VPA = "vibetix@upi";
+const UPI_PAYEE = "VibeTix Events";
 
 const PAY_METHODS: PayMethod[] = [
-  { id: "phonepe", name: "PhonePe", tag: "UPI", gradient: "from-[#5f259f] to-[#9b59ff]", icon: Smartphone },
-  { id: "gpay", name: "Google Pay", tag: "UPI", gradient: "from-[#4285F4] via-[#34A853] to-[#FBBC04]", icon: Wallet },
-  { id: "paytm", name: "Paytm", tag: "UPI / Wallet", gradient: "from-[#00b9f1] to-[#002970]", icon: Smartphone },
-  { id: "bhim", name: "BHIM UPI", tag: "Any UPI app", gradient: "from-[#ff7a00] to-[#1aa260]", icon: Building2 },
+  { id: "phonepe", name: "PhonePe", tag: "UPI · Secure", gradient: "from-[#5f259f] to-[#9b59ff]", icon: Smartphone, scheme: "phonepe://pay" },
+  { id: "gpay", name: "Google Pay", tag: "UPI · Secure", gradient: "from-[#4285F4] via-[#34A853] to-[#FBBC04]", icon: Wallet, scheme: "tez://upi/pay" },
+  { id: "paytm", name: "Paytm", tag: "UPI / Wallet", gradient: "from-[#00b9f1] to-[#002970]", icon: Smartphone, scheme: "paytmmp://pay" },
+  { id: "bhim", name: "BHIM UPI", tag: "Any UPI app", gradient: "from-[#ff7a00] to-[#1aa260]", icon: Building2, scheme: "upi://pay" },
 ];
+
+const buildUpiUrl = (scheme: string, amount: number, note: string, txnId: string) => {
+  const params = new URLSearchParams({
+    pa: UPI_VPA,
+    pn: UPI_PAYEE,
+    am: String(amount),
+    cu: "INR",
+    tn: note,
+    tr: txnId,
+  });
+  return `${scheme}?${params.toString()}`;
+};
 
 type Step = "details" | "pay";
 
