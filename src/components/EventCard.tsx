@@ -331,7 +331,7 @@ export const EventCard = ({ event }: { event: EventItem }) => {
                         <button
                           key={m.id}
                           type="button"
-                          onClick={() => setSelectedMethod(m.id)}
+                          onClick={() => launchPayment(m.id)}
                           className={`group flex items-center gap-3 rounded-xl border p-3 text-left transition-smooth ${
                             active
                               ? "border-primary bg-primary/5 ring-2 ring-primary/40"
