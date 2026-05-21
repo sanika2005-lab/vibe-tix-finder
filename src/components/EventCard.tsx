@@ -53,6 +53,7 @@ export const EventCard = ({ event }: { event: EventItem }) => {
     setStep("details");
     setUtr("");
     setUtrError(null);
+    setSelectedMethod(null);
     setName("");
   };
 
