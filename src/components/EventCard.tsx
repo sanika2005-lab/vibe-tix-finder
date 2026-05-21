@@ -358,48 +358,72 @@ export const EventCard = ({ event }: { event: EventItem }) => {
                 </div>
 
 
-                <div className="space-y-1.5">
-                  <Label htmlFor={`utr-${event.id}`}>
-                    UTR / Transaction ID{" "}
-                    <span className="text-xs font-normal text-destructive">(required)</span>
-                  </Label>
-                  <Input
-                    id={`utr-${event.id}`}
-                    value={utr}
-                    onChange={(e) => {
-                      setUtr(e.target.value);
-                      if (utrError) setUtrError(null);
-                    }}
-                    placeholder="e.g. 412345678901"
-                    maxLength={22}
-                    autoCapitalize="characters"
-                    className="h-11 rounded-xl font-mono uppercase"
-                  />
-                  {utrError ? (
-                    <p className="text-xs text-destructive">{utrError}</p>
-                  ) : (
-                    <p className="text-xs text-muted-foreground">
-                      Found in your UPI app after payment. We'll verify it instantly.
-                    </p>
-                  )}
-                </div>
+                {paymentLaunched && selectedMethod && (
+                  <>
+                    <div className="rounded-xl border border-primary/30 bg-primary/5 p-3 text-xs text-foreground">
+                      <p className="font-medium">
+                        {PAY_METHODS.find((m) => m.id === selectedMethod)?.name} opened in a secure window.
+                      </p>
+                      <p className="mt-1 text-muted-foreground">
+                        Complete the payment of <span className="font-semibold text-foreground">₹{formatINR(event.price)}</span>,
+                        then copy the UTR from your payment app and paste it below.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => launchPayment(selectedMethod)}
+                        className="mt-2 text-primary underline-offset-2 hover:underline"
+                      >
+                        Didn't open? Tap to retry
+                      </button>
+                    </div>
 
-                <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
-                  <Mail className="h-3.5 w-3.5" />
-                  Confirmation will be emailed to{" "}
-                  <span className="font-medium text-foreground">{email}</span>
-                </p>
+                    <div className="space-y-1.5">
+                      <Label htmlFor={`utr-${event.id}`}>
+                        UTR / Transaction ID{" "}
+                        <span className="text-xs font-normal text-destructive">(required)</span>
+                      </Label>
+                      <Input
+                        id={`utr-${event.id}`}
+                        value={utr}
+                        onChange={(e) => {
+                          setUtr(e.target.value);
+                          if (utrError) setUtrError(null);
+                        }}
+                        placeholder="e.g. 412345678901"
+                        maxLength={22}
+                        autoCapitalize="characters"
+                        className="h-11 rounded-xl font-mono uppercase"
+                      />
+                      {utrError ? (
+                        <p className="text-xs text-destructive">{utrError}</p>
+                      ) : (
+                        <p className="text-xs text-muted-foreground">
+                          Found in your UPI app after payment. We'll verify it instantly.
+                        </p>
+                      )}
+                    </div>
+
+                    <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+                      <Mail className="h-3.5 w-3.5" />
+                      Confirmation will be emailed to{" "}
+                      <span className="font-medium text-foreground">{email}</span>
+                    </p>
+                  </>
+                )}
               </div>
 
               <DialogFooter className="gap-2 sm:gap-2">
                 <Button variant="ghost" onClick={() => setStep("details")} disabled={verifying}>
                   Back
                 </Button>
-                <Button onClick={handlePayClick} disabled={verifying} className="rounded-full">
-                  <CheckCircle2 className="mr-2 h-4 w-4" />
-                  {verifying ? "Verifying…" : "I have paid"}
-                </Button>
+                {paymentLaunched && (
+                  <Button onClick={handlePayClick} disabled={verifying} className="rounded-full">
+                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                    {verifying ? "Verifying…" : "I have paid"}
+                  </Button>
+                )}
               </DialogFooter>
+
             </>
           )}
         </DialogContent>
