@@ -58,11 +58,10 @@ export const EventCard = ({ event }: { event: EventItem }) => {
 
   const verifyUtr = (value: string): string | null => {
     const v = value.trim().toUpperCase();
-    if (!v) return null; // optional
+    if (!v) return "Enter the UTR / Transaction ID from your UPI app to confirm payment.";
     if (!/^[A-Z0-9]{12,22}$/.test(v)) {
       return "UTR should be 12–22 letters/digits (no spaces).";
     }
-    // Reject obvious dummies (all same char or simple sequences)
     if (/^(.)\1+$/.test(v)) return "That doesn't look like a real UTR.";
     return null;
   };
@@ -70,18 +69,22 @@ export const EventCard = ({ event }: { event: EventItem }) => {
   const handlePayClick = async () => {
     const err = verifyUtr(utr);
     setUtrError(err);
-    if (err) return;
-
-    if (utr.trim()) {
-      // Simulate verification call
-      setVerifying(true);
-      await new Promise((r) => setTimeout(r, 900));
-      setVerifying(false);
+    if (err) {
       toast({
-        title: "Transaction verified ✓",
-        description: `UTR ${utr.trim().toUpperCase()} matched.`,
+        title: "Payment not verified",
+        description: "We can only send the confirmation email after a valid UTR is verified.",
+        variant: "destructive",
       });
+      return;
     }
+
+    setVerifying(true);
+    await new Promise((r) => setTimeout(r, 900));
+    setVerifying(false);
+    toast({
+      title: "Payment verified ✓",
+      description: `UTR ${utr.trim().toUpperCase()} matched. Sending confirmation email…`,
+    });
     completeRegistration();
   };
 
