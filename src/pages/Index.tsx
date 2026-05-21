@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EventCard } from "@/components/EventCard";
+import { HelpSection } from "@/components/HelpSection";
 import { events, friends } from "@/data/mockData";
 import heroBg from "@/assets/hero-bg.jpg";
 
