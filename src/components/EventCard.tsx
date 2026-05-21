@@ -77,7 +77,28 @@ export const EventCard = ({ event }: { event: EventItem }) => {
     setUtr("");
     setUtrError(null);
     setSelectedMethod(null);
+    setPaymentLaunched(false);
     setName("");
+  };
+
+  const launchPayment = (methodId: string) => {
+    const method = PAY_METHODS.find((m) => m.id === methodId);
+    if (!method) return;
+    setSelectedMethod(methodId);
+    const txnId = `VTX${event.id.toUpperCase()}${Date.now().toString().slice(-6)}`;
+    const note = `${event.title} ticket`;
+    const url = buildUpiUrl(method.scheme, event.price, note, txnId);
+
+    // Try to open the app via deep link (works on mobile devices)
+    const win = window.open(url, "_blank");
+    // Fallback: same-tab navigation if popup blocked
+    if (!win) window.location.href = url;
+
+    setPaymentLaunched(true);
+    toast({
+      title: `Opening ${method.name}…`,
+      description: "Complete the payment securely, then return here and enter your UTR.",
+    });
   };
 
   const handleDetailsSubmit = (e: React.FormEvent) => {
