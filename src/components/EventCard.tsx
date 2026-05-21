@@ -255,24 +255,56 @@ export const EventCard = ({ event }: { event: EventItem }) => {
                   Pay ₹{formatINR(event.price)}
                 </DialogTitle>
                 <DialogDescription>
-                  Scan the QR with PhonePe, Google Pay, Paytm or any UPI app.
+                  Choose your payment app to pay securely. No QR scan needed.
                 </DialogDescription>
               </DialogHeader>
 
               <div className="space-y-4">
-                <div className="overflow-hidden rounded-2xl border border-border/60 bg-black">
-                  <img
-                    src={paymentQr}
-                    alt="UPI payment QR code"
-                    className="mx-auto block w-full max-w-xs"
-                  />
-                </div>
                 <div className="rounded-xl bg-muted/60 p-3 text-center text-sm">
-                  <p className="font-medium text-foreground">Miss SANIKA KRUSHNAT YADAV</p>
+                  <p className="font-medium text-foreground">{name || "Attendee"}</p>
                   <p className="text-xs text-muted-foreground">
                     Amount: ₹{formatINR(event.price)} · {event.title}
                   </p>
                 </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs uppercase tracking-wide text-muted-foreground">
+                    Pay using
+                  </Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {PAY_METHODS.map((m) => {
+                      const Icon = m.icon;
+                      const active = selectedMethod === m.id;
+                      return (
+                        <button
+                          key={m.id}
+                          type="button"
+                          onClick={() => setSelectedMethod(m.id)}
+                          className={`group flex items-center gap-3 rounded-xl border p-3 text-left transition-smooth ${
+                            active
+                              ? "border-primary bg-primary/5 ring-2 ring-primary/40"
+                              : "border-border/60 hover:border-primary/50 hover:bg-muted/40"
+                          }`}
+                        >
+                          <span
+                            className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-gradient-to-br ${m.gradient} text-white shadow-sm`}
+                          >
+                            <Icon className="h-4 w-4" />
+                          </span>
+                          <span className="min-w-0">
+                            <span className="block truncate text-sm font-semibold text-foreground">
+                              {m.name}
+                            </span>
+                            <span className="block truncate text-[11px] text-muted-foreground">
+                              {m.tag}
+                            </span>
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
 
                 <div className="space-y-1.5">
                   <Label htmlFor={`utr-${event.id}`}>
