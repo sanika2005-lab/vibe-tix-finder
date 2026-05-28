@@ -27,7 +27,7 @@ type PayMethod = {
   scheme: string; // UPI deep-link scheme for that app
 };
 
-const UPI_VPA = "vibetix@upi";
+const UPI_VPA = "7796801516@ibl";
 const UPI_PAYEE = "VibeTix Events";
 
 const PAY_METHODS: PayMethod[] = [
