@@ -342,6 +342,8 @@ const Dashboard = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      <EventChatbot />
     </div>
   );
 };
