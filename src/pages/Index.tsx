@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EventCard } from "@/components/EventCard";
 import { HelpSection } from "@/components/HelpSection";
+import { EventChatbot } from "@/components/EventChatbot";
 import { events, friends } from "@/data/mockData";
 import heroBg from "@/assets/hero-bg.jpg";
 
@@ -245,6 +246,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      <EventChatbot />
     </div>
   );
 };

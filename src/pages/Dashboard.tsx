@@ -4,6 +4,7 @@ import html2canvas from "html2canvas-pro";
 import { jsPDF } from "jspdf";
 import { Navbar } from "@/components/Navbar";
 import { EventCard } from "@/components/EventCard";
+import { EventChatbot } from "@/components/EventChatbot";
 import { FriendsAvatars } from "@/components/FriendsAvatars";
 import { AvatarCropper } from "@/components/AvatarCropper";
 import { Button } from "@/components/ui/button";
